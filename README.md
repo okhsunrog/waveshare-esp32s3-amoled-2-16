@@ -4,8 +4,8 @@ Rust/`esp-hal` bring-up project for the
 [Waveshare ESP32-S3-Touch-AMOLED-2.16][board-docs].
 
 The firmware initializes the CO5300 over QSPI and renders an interactive
-480 × 480 Slint UI from a PSRAM framebuffer. Dirty rectangles use the
-work-in-progress Slint physical alignment API required by the CO5300. The UI
+480 × 480 Slint UI from a PSRAM framebuffer. Dirty rectangles use Slint's
+physical alignment API required by the CO5300. The UI
 has overview, display, power, and RTC sections sized for the panel's
 rounded-corner safe area.
 
@@ -41,8 +41,9 @@ events, page navigation, and brightness controls have been verified on the
 physical AMOLED board.
 
 The AXP2101 setup intentionally changes no board-specific regulator rails. It
-only enables battery detection and the ADC channels used for telemetry.
-Brightness is independent of the PMIC on this AMOLED board.
+configures the installed 1000mAh, 4.2V cell for 500mA charging, and enables
+battery detection plus the ADC channels used for telemetry. Brightness is
+independent of the PMIC on this AMOLED board.
 
 ## Measured frame cost
 
@@ -97,9 +98,8 @@ cargo build --release
 
 Cargo fetches everything, including Slint. The dirty-region alignment API the
 CO5300 needs is not in a Slint release yet, so `slint` and `slint-build` come
-from the branch behind [slint-ui/slint#12656][alignment-pr]; `Cargo.lock` pins
-the exact commit. Once the API lands in a release, both can move back to
-crates.io.
+from upstream Slint's `master` branch; `Cargo.lock` pins the exact commit. Once
+the API lands in a release, both can move back to crates.io.
 
 The generated runner uses the ESP32-S3 USB-JTAG interface:
 
@@ -110,6 +110,5 @@ cargo run --release
 Hardware values and the initialization sequence are based on the
 [official Waveshare examples][vendor-repo].
 
-[alignment-pr]: https://github.com/slint-ui/slint/pull/12656
 [board-docs]: https://docs.waveshare.com/ESP32-S3-Touch-AMOLED-2.16
 [vendor-repo]: https://github.com/waveshareteam/ESP32-S3-Touch-AMOLED-2.16
